@@ -1,55 +1,43 @@
-# Claude Desktop Multi-Instance (Windows)
+```
+     ▐▛███▜▌
+    ▝▜█████▛▘
+      ▘▘ ▝▝
+```
 
-Run **multiple Claude Desktop instances side by side on Windows**, each with its
-own account, MCP servers, and settings — even though Claude ships as a
-single-instance MSIX app.
+# Claude Switch
 
-One click. Survives auto-updates. Doesn't touch your normal install.
+**Open more than one Claude Desktop on Windows — each with its own account.**
 
----
+Want one Claude for work and another for personal stuff? Or a few Claudes
+signed into different accounts, each with different MCP servers and settings?
+Normally Windows won't let you — Claude Switch makes it happen with one
+double-click.
 
-## Requirements
-
-- Windows 10/11
-- Claude Desktop installed from the official installer (MSIX / Microsoft Store style install)
-- Administrator rights (only needed while installing, to read the protected `WindowsApps` folder)
-- ~200 MB free disk space per portable copy
-
----
-
-## Why this is needed
-
-Claude Desktop for Windows installs as an **MSIX package** under
-`C:\Program Files\WindowsApps`. That causes two problems if you want a second
-instance:
-
-1. **Windows blocks launching the `.exe` directly** from `WindowsApps`
-   (`"Windows cannot access the specified device, path, or file"`). So shortcuts
-   pointing straight at the packaged exe fail.
-2. The package is built to run **one instance**. Even with Electron's
-   `--user-data-dir` flag, you can't reach the exe to pass it.
-
-**The fix:** copy Claude to a normal folder *outside* `WindowsApps`
-(`C:\ClaudePortable`), where Windows allows direct launch, then create one
-shortcut per instance — each with its own `--user-data-dir`. Each instance gets
-a fully isolated profile: separate account, separate MCP servers, separate
-Cowork/settings.
-
-> This is the part most guides miss: on Windows the MSIX exe can't be launched
-> in place, so you have to run a portable copy. That's exactly what `install.ps1`
-> does, and re-running it picks up Claude's latest auto-update.
+- ✅ One-click setup
+- ✅ Every window has its own login, MCP servers, and settings
+- ✅ Your original Claude stays exactly as it is
+- ✅ Keeps working after Claude updates itself
 
 ---
 
-## Quick start
+## What you need
 
-1. **Download** this repo (green `Code` button → `Download ZIP`, then extract),
-   or clone it with `git clone`.
-2. Double-click **`INSTALL.cmd`**. It asks for Administrator (needed once, to
-   read the protected `WindowsApps` folder) and sets up **2 extra instances**.
-3. On your Desktop you'll now have **`Claude 2`** and **`Claude 3`** shortcuts.
+- Windows 10 or 11
+- Claude Desktop already installed
+- Admin rights (asked for once during setup)
+- About 200 MB of free space
 
-Want a different number? Run from an **admin** PowerShell:
+---
+
+## Get started
+
+1. Grab this repo — hit the green **Code** button, choose **Download ZIP**,
+   and unzip it (or clone it with `git clone`).
+2. Double-click **`INSTALL.cmd`**. Say yes to the admin prompt.
+3. That's it! Look at your Desktop — you'll see new shortcuts called
+   **Claude 2** and **Claude 3**.
+
+Need more (or fewer) copies? Open PowerShell **as admin** and run:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\install.ps1 -Instances 3
@@ -57,107 +45,113 @@ powershell -ExecutionPolicy Bypass -File scripts\install.ps1 -Instances 3
 
 ---
 
-## Logging into different accounts (important!)
+## Signing in — read this first! 🔑
 
-The first login of each new instance must be done **one at a time, with the
-other Claude windows closed**.
+The very first sign-in for each new Claude has to happen **one window at a
+time**, with every other Claude closed.
 
-Why: Claude's login opens your browser and returns to the app via a `claude://`
-link. That link goes to whichever instance is currently open — so if several are
-open, the login lands on the wrong one and they all end up on the same account.
+Here's why: when you sign in, your browser sends you back to the app through a
+special link. That link lands on whichever Claude window happens to be open.
+If several are open at once, the login can land on the wrong one — and suddenly
+they're all the same account.
 
-**Do this:**
+**So do it like this:**
 
-1. Close **all** Claude Desktop windows (check the system tray ▲ near the clock).
-2. Open **only `Claude 2`** → log in (Google sign-in, or email + code — any
-   method works) → finish the login.
-3. Open **`Claude 3`** → log in with a different account.
-4. Open your normal Claude (Start menu) → it keeps your main account.
+1. Close **every** Claude window. Peek at the little arrow (▲) near the clock
+   to make sure none are hiding in the tray.
+2. Open **only Claude 2** and sign in (Google, or email + code — whatever you
+   like).
+3. When that's done, open **Claude 3** and sign in with the next account.
+4. Your regular Claude (Start menu) still has your main account — untouched.
 
-After the first login, each session persists. You can then run all of them at
-once, in any order.
-
----
-
-## Updating
-
-When Claude Desktop auto-updates, the portable copy stays on the old version.
-To refresh it, just **run `INSTALL.cmd` again** (or `scripts\install.ps1`).
-It detects the new version, recopies, and your existing Desktop shortcuts keep
-working — no need to recreate them.
+You only do this dance once. After that, every Claude remembers its own
+account and you can open them all together whenever you want.
 
 ---
 
-## Uninstall
+## When Claude updates itself
+
+Claude updates on its own from time to time, and the extra copies stay on the
+older version. Fixing that takes one step: **run `INSTALL.cmd` again.** It
+grabs the new version and your shortcuts keep working as before.
+
+---
+
+## Removing it
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\uninstall.ps1
 ```
 
-Removes the portable copy, the `Claude N` shortcuts, and the isolated profiles.
-Your normal Claude install is left untouched. Add `-KeepProfiles` to keep your
-logged-in instance data.
+That deletes the extra copy, the shortcuts, and the extra profiles. Your
+regular Claude is never touched. Want to keep the signed-in accounts for
+later? Add `-KeepProfiles`.
 
 ---
 
-## What gets created
+## Where things live
 
-| Path | What |
-|------|------|
-| `C:\ClaudePortable\` | Portable copy of Claude (launchable, outside WindowsApps) |
-| `%APPDATA%\Claude-Instance2`, `...3`, ... | Isolated profile per instance (account, MCP, settings) |
-| `Desktop\Claude 2.lnk`, `Claude 3.lnk` | Shortcuts that launch each instance |
+| Place | What's there |
+|-------|--------------|
+| `C:\ClaudePortable\` | A copy of Claude that Windows lets you launch freely |
+| `%APPDATA%\Claude-Instance2`, `...3` | Each window's own account, MCP servers, and settings |
+| `Desktop\Claude 2.lnk`, `Claude 3.lnk` | The shortcuts that open each window |
 
-Your normal install and its data (`%APPDATA%\Claude`) are never modified.
-
----
-
-## How it works (technical)
-
-- `Get-AppxPackage *Claude*` finds the current MSIX install location (robust
-  across version bumps).
-- `robocopy /MIR` mirrors `…\app` into `C:\ClaudePortable`.
-- Each shortcut runs `C:\ClaudePortable\Claude.exe --user-data-dir="%APPDATA%\Claude-InstanceN"`.
-- Electron stores **all** per-instance state (auth tokens included) under that
-  data dir, so instances are fully independent.
+Your normal Claude and its data (`%APPDATA%\Claude`) are never modified.
 
 ---
 
-## Troubleshooting
+## Something not working?
 
-| Problem | Fix |
-|---------|-----|
-| `Could not find Claude Desktop` | Make sure Claude Desktop is installed and you ran the script **as Administrator**. |
-| `Windows cannot access the specified device...` | You're launching the exe inside `WindowsApps` directly — use the generated `Claude N` shortcuts instead. |
-| Two instances ended up on the same account | Delete the wrong profile folder (`%APPDATA%\Claude-InstanceN`), then redo the login with **all other Claude windows closed**. |
-| Shortcuts stopped working after a Claude update | Re-run `INSTALL.cmd` — it recopies the new version to the portable folder. |
-| Copy fails / files locked | Close every Claude window (including tray icon) and re-run the installer. |
+| What you see | What to do |
+|--------------|-----------|
+| "Could not find Claude Desktop" | Check Claude is installed, and run the installer **as admin**. |
+| "Windows cannot access the specified device..." | Don't launch Claude from the `WindowsApps` folder — use the `Claude 2` / `Claude 3` shortcuts. |
+| Two windows show the same account | Delete that window's folder (`%APPDATA%\Claude-InstanceN`) and sign in again with all other Claudes closed. |
+| Shortcuts broke after a Claude update | Run `INSTALL.cmd` once more. |
+| Setup fails because files are "in use" | Close every Claude window (tray too!) and try again. |
 
 ---
 
-## Notes & limitations
+## How does it work? (the nerdy bit)
 
-- **Windows only.** On macOS use `open -n -a "Claude.app" --args --user-data-dir=...`;
-  on Linux invoke the AppImage/binary with the same flag — no portable copy needed
-  there.
-- Re-run after each Claude update to keep the portable copy current.
-- RAM: each instance is a full Electron app. Don't open more than you need.
+Claude Desktop installs as an MSIX package inside `C:\Program Files\WindowsApps`.
+Windows refuses to launch programs straight from that folder, and the package
+is built to run as a single instance — so you can't just make a second
+shortcut.
+
+Claude Switch works around this:
+
+- It finds your Claude install with `Get-AppxPackage`.
+- It copies the app to a normal folder (`C:\ClaudePortable`) using
+  `robocopy /MIR` — outside `WindowsApps`, launching is allowed.
+- Each shortcut starts that copy with its own
+  `--user-data-dir="%APPDATA%\Claude-InstanceN"`, so Electron keeps every
+  window's account, tokens, and settings completely separate.
+
+---
+
+## Inside the box
+
+```
+INSTALL.cmd            Double-click me — asks for admin and runs the setup
+scripts/install.ps1    Finds Claude, copies it, makes the shortcuts
+scripts/uninstall.ps1  Cleans everything up again
+```
+
+---
+
+## Good to know
+
+- **Windows only.** On macOS: `open -n -a "Claude.app" --args --user-data-dir=...`.
+  On Linux: run the binary with the same flag. Neither needs the copy trick.
+- Each Claude window is a full app — only open as many as you actually use.
 - Not affiliated with Anthropic. Use at your own discretion.
 
 ---
 
-## Project structure
+## Want to help?
 
-```
-INSTALL.cmd            One-click entry point (self-elevates, calls install.ps1)
-scripts/install.ps1    Finds the MSIX install, copies it portable, creates shortcuts
-scripts/uninstall.ps1  Removes the portable copy, shortcuts, and (optionally) profiles
-```
-
----
-
-## Contributing
-
-Issues and PRs welcome. Keep changes Windows-PowerShell-5-compatible (no
-PowerShell 7-only syntax) so the scripts run on a stock Windows install.
-
+Issues and pull requests are welcome! One request: keep the scripts compatible
+with the PowerShell that ships with Windows (5.1) — no PowerShell 7-only
+syntax — so everything works on a fresh machine.
