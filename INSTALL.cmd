@@ -1,5 +1,5 @@
 @echo off
-:: Claude Desktop Multi-Instance — one-click installer
+:: Claude Desktop Multi-Instance - one-click installer
 :: Self-elevates to Administrator (needed to read the protected WindowsApps folder)
 
 net session >nul 2>&1

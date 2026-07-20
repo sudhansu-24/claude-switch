@@ -25,7 +25,7 @@ $ErrorActionPreference = "SilentlyContinue"
 
 Write-Host "=== Uninstall Claude Multi-Instance ===" -ForegroundColor Cyan
 
-# Kill only Claude processes running FROM the portable folder — leaves the
+# Kill only Claude processes running FROM the portable folder. Leaves the
 # user's normal (MSIX) Claude untouched even if it's open.
 Get-CimInstance Win32_Process -Filter "Name='Claude.exe'" |
     Where-Object { $_.ExecutablePath -like "$PortableDir\*" } |
