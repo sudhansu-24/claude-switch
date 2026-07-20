@@ -1,10 +1,6 @@
-```
-     ▐▛███▜▌
-    ▝▜█████▛▘
-      ▘▘ ▝▝
-```
-
-# Claude Switch
+<p align="center">
+  <img src="assets/banner.svg" width="440" alt="Claude Switch">
+</p>
 
 **Open more than one Claude Desktop on Windows — each with its own account.**
 
